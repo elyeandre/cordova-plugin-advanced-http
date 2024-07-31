@@ -458,14 +458,19 @@ module.exports = function init(global, jsUtil, cookieHandler, messages, base64, 
       return onFinished(result);
     }
 
-    if (entry.value[1] instanceof global.Blob || entry.value[1] instanceof global.File) {
+        if (
+      entry.value[1] instanceof global.Blob ||
+      entry.value[1].constructor.name === "Blob" ||
+      entry.value[1] instanceof global.File ||
+      entry.value[1].constructor.name === "File"
+    ) {
       var reader = new global.FileReader();
 
       reader.onload = function () {
         result.buffers.push(base64.fromArrayBuffer(reader.result));
         result.names.push(entry.value[0]);
-        result.fileNames.push(entry.value[1].name !== undefined ? entry.value[1].name : 'blob');
-        result.types.push(entry.value[1].type || '');
+        result.fileNames.push(entry.value[1].name || "blob");
+        result.types.push(entry.value[1].type || "");
         processFormDataIterator(iterator, textEncoder, result, onFinished);
       };
 
